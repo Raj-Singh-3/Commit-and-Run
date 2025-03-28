@@ -1,4 +1,4 @@
-#root {
+/* #root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
@@ -39,4 +39,33 @@
 
 .read-the-docs {
   color: #888;
+} */
+
+
+.app-container {
+  display: flex;
+  height: 100vh;
+}
+
+.navbar-section {
+  width: 30%;
+  background-color: #f0f0f0;
+  border-right: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar-header {
+  padding: 16px;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chatbot-section {
+  width: 70%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
