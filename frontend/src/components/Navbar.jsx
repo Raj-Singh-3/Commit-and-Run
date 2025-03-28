@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./Navbar.css";
 import { Menu, NotebookText, Youtube, FileText, HelpCircle, Eraser, Download } from "lucide-react";
+import emailjs from "emailjs-com";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -9,17 +10,19 @@ const Navbar = () => {
   const ctxRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [notes, setNotes] = useState("");
+  const [showHelpPopup, setShowHelpPopup] = useState(false);
+  const [helpMessage, setHelpMessage] = useState("");
 
   const navItems = [
     { icon: <NotebookText className="nav-icon" />, text: "Draw", onClick: () => handleSectionClick("draw") },
-    { icon: <Youtube className="nav-icon" />, text: "YouTube", onClick: () => handleSectionClick("youtube") },
+    { icon: <Youtube className="nav-icon" />, text: "YouTube", onClick: () => window.open("https://www.youtube.com", "_blank") },
     { icon: <FileText className="nav-icon" />, text: "Notes", onClick: () => handleSectionClick("notes") },
-    { icon: <HelpCircle className="nav-icon" />, text: "Help", onClick: () => handleSectionClick("help") },
+    { icon: <HelpCircle className="nav-icon" />, text: "Help", onClick: () => setShowHelpPopup(true) },
   ];
 
   function handleSectionClick(section) {
     setActiveSection(section);
-    setIsMenuOpen(false); // Close navbar when any section is clicked
+    setIsMenuOpen(false);
   }
 
   useEffect(() => {
@@ -65,6 +68,21 @@ const Navbar = () => {
     element.download = "notes.txt";
     document.body.appendChild(element);
     element.click();
+  };
+
+  const sendHelpRequest = (e) => {
+    e.preventDefault();
+    emailjs
+      .send("service_ru0gfim", "template_g89bnel", {
+        from_name: "User",
+        message: helpMessage,
+      }, "Sn7lu72SQZFPFJs6-")
+      .then(() => {
+        alert("Help request sent successfully!");
+        setShowHelpPopup(false);
+        setHelpMessage("");
+      })
+      .catch((err) => console.error("Failed to send help request:", err));
   };
 
   return (
@@ -119,6 +137,23 @@ const Navbar = () => {
           <button className="download-btn" onClick={downloadNotes}>
             <Download /> Download Notes
           </button>
+        </div>
+      )}
+
+      {/* Help Popup */}
+      {showHelpPopup && (
+        <div className="help-popup">
+          <div className="help-popup-content">
+            <h3 style={{color:"greenyellow"}}>Need Help?</h3>
+            <textarea
+              className="help-textarea"
+              value={helpMessage}
+              onChange={(e) => setHelpMessage(e.target.value)}
+              placeholder="Describe your problem..."
+            ></textarea>
+            <button className="send-help-btn" style={{marginRight:"12px"}}onClick={sendHelpRequest}>Send Request</button>
+            <button className="close-help-btn" onClick={() => setShowHelpPopup(false)}>Close</button>
+          </div>
         </div>
       )}
     </nav>

@@ -1,10 +1,11 @@
 .app-container {
   display: flex;
   height: 100vh;
+  width:100vw;
 }
 
 .navbar-section {
-  width: 26%;
+  max-width: 26%;
   background-color: #1e1e2f;
   border-right: 2px solid #444;
   display: flex;
@@ -27,7 +28,7 @@
 }
 
 .chatbot-section {
-  width: 98%;
+  max-width: 88%;
   display: flex;
   justify-content: center;
   align-items: center;

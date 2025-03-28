@@ -10,7 +10,6 @@ import {
   Trash2 
 } from 'lucide-react';
 import { useUser, UserButton } from '@clerk/clerk-react'; // Import UserButton
-// import Tesseract from 'tesseract.js';
 import './Chatbot.css';
 
 const Chatbot = () => {
@@ -197,7 +196,7 @@ const Chatbot = () => {
         <div className="header-left">
           <Bot className="header-icon" />
           <div>
-            <h2>R38 Assistant</h2>
+            <h2>Eklavya AI</h2>
             <span className="status-indicator">Online</span>
           </div>
         </div>
