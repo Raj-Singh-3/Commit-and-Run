@@ -143,18 +143,34 @@ const Navbar = () => {
       {/* Help Popup */}
       {showHelpPopup && (
         <div className="help-popup">
-          <div className="help-popup-content">
-            <h3 style={{color:"greenyellow"}}>Need Help?</h3>
-            <textarea
-              className="help-textarea"
-              value={helpMessage}
-              onChange={(e) => setHelpMessage(e.target.value)}
-              placeholder="Describe your problem..."
-            ></textarea>
-            <button className="send-help-btn" style={{marginRight:"12px"}}onClick={sendHelpRequest}>Send Request</button>
-            <button className="close-help-btn" onClick={() => setShowHelpPopup(false)}>Close</button>
-          </div>
+        <div className="help-popup-content">
+          <textarea
+            className="help-textarea"
+            value={helpMessage}
+            onChange={(e) => setHelpMessage(e.target.value)}
+            placeholder="Describe your problem..."
+            style={{
+              width: "80%",
+              margin:"2px",
+              height: "55px",
+              padding: "11px",
+              fontSize: "16px",
+              borderRadius: "8px",
+              border: "1px solid #ccc",
+              outline: "none",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+              resize: "none",
+            }}
+          ></textarea>
+          <button className="send-help-btn" style={{ marginRight: "12px" }} onClick={sendHelpRequest}>
+            Send Request
+          </button>
+          <button className="close-help-btn" onClick={() => setShowHelpPopup(false)}>
+            Close
+          </button>
         </div>
+      </div>
+      
       )}
     </nav>
   );
