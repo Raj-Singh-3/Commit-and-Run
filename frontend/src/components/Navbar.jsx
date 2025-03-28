@@ -1,103 +1,126 @@
-// import React from 'react';
-// import { 
-//   NotebookText, 
-//   Youtube, 
-//   Settings, 
-//   HelpCircle 
-// } from 'lucide-react';
-
-// const Navbar = () => {
-//   const navItems = [
-//     { 
-//       icon: <NotebookText className="mr-2" />, 
-//       text: 'Notes', 
-//       onClick: () => console.log('Notes clicked') 
-//     },
-//     { 
-//       icon: <Youtube className="mr-2" />, 
-//       text: 'YouTube', 
-//       onClick: () => console.log('YouTube clicked') 
-//     },
-//     { 
-//       icon: <Settings className="mr-2" />, 
-//       text: 'Settings', 
-//       onClick: () => console.log('Settings clicked') 
-//     },
-//     { 
-//       icon: <HelpCircle className="mr-2" />, 
-//       text: 'Help', 
-//       onClick: () => console.log('Help clicked') 
-//     }
-//   ];
-
-//   return (
-//     <nav className="flex-grow">
-//       <ul className="p-4">
-//         {navItems.map((item, index) => (
-//           <li 
-//             key={index} 
-//             className="flex items-center p-3 hover:bg-gray-200 rounded-md cursor-pointer transition-colors"
-//             onClick={item.onClick}
-//           >
-//             {item.icon}
-//             <span className="text-gray-700">{item.text}</span>
-//           </li>
-//         ))}
-//       </ul>
-//     </nav>
-//   );
-// };
-
-// export default Navbar;
-
-
-
-
-
-
-
-import React from 'react';
-import './Navbar.css';
-import { NotebookText, Youtube, Settings, HelpCircle } from 'lucide-react';
+import React, { useState, useRef, useEffect } from "react";
+import "./Navbar.css";
+import { Menu, NotebookText, Youtube, FileText, HelpCircle, Eraser, Download } from "lucide-react";
 
 const Navbar = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState(null);
+  const canvasRef = useRef(null);
+  const ctxRef = useRef(null);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [notes, setNotes] = useState("");
+
   const navItems = [
-    { 
-      icon: <NotebookText className="nav-icon" />, 
-      text: 'Notes', 
-      onClick: () => console.log('Notes clicked') 
-    },
-    { 
-      icon: <Youtube className="nav-icon" />, 
-      text: 'YouTube', 
-      onClick: () => console.log('YouTube clicked') 
-    },
-    { 
-      icon: <Settings className="nav-icon" />, 
-      text: 'Settings', 
-      onClick: () => console.log('Settings clicked') 
-    },
-    { 
-      icon: <HelpCircle className="nav-icon" />, 
-      text: 'Help', 
-      onClick: () => console.log('Help clicked') 
-    }
+    { icon: <NotebookText className="nav-icon" />, text: "Draw", onClick: () => handleSectionClick("draw") },
+    { icon: <Youtube className="nav-icon" />, text: "YouTube", onClick: () => handleSectionClick("youtube") },
+    { icon: <FileText className="nav-icon" />, text: "Notes", onClick: () => handleSectionClick("notes") },
+    { icon: <HelpCircle className="nav-icon" />, text: "Help", onClick: () => handleSectionClick("help") },
   ];
+
+  function handleSectionClick(section) {
+    setActiveSection(section);
+    setIsMenuOpen(false); // Close navbar when any section is clicked
+  }
+
+  useEffect(() => {
+    if (activeSection === "draw" && canvasRef.current) {
+      const canvas = canvasRef.current;
+      canvas.width = 300;
+      canvas.height = 400;
+      const ctx = canvas.getContext("2d");
+      ctx.lineWidth = 3;
+      ctx.lineCap = "round";
+      ctx.strokeStyle = "black";
+      ctxRef.current = ctx;
+    }
+  }, [activeSection]);
+
+  const startDrawing = (e) => {
+    const { offsetX, offsetY } = e.nativeEvent;
+    ctxRef.current.beginPath();
+    ctxRef.current.moveTo(offsetX, offsetY);
+    setIsDrawing(true);
+  };
+
+  const draw = (e) => {
+    if (!isDrawing) return;
+    const { offsetX, offsetY } = e.nativeEvent;
+    ctxRef.current.lineTo(offsetX, offsetY);
+    ctxRef.current.stroke();
+  };
+
+  const stopDrawing = () => {
+    ctxRef.current.closePath();
+    setIsDrawing(false);
+  };
+
+  const clearCanvas = () => {
+    ctxRef.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+  };
+
+  const downloadNotes = () => {
+    const element = document.createElement("a");
+    const file = new Blob([notes], { type: "text/plain" });
+    element.href = URL.createObjectURL(file);
+    element.download = "notes.txt";
+    document.body.appendChild(element);
+    element.click();
+  };
 
   return (
     <nav className="navbar">
-      <ul className="navbar-list">
-        {navItems.map((item, index) => (
-          <li 
-            key={index} 
-            className="navbar-item"
-            onClick={item.onClick}
-          >
-            {item.icon}
-            <span className="navbar-text">{item.text}</span>
-          </li>
-        ))}
-      </ul>
+      {/* Hamburger Icon */}
+      <div className="menu-icon" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+        <Menu size={32} color="#fff" />
+      </div>
+
+      {/* Navbar Items */}
+      {isMenuOpen && (
+        <ul className="navbar-list">
+          {navItems.map((item, index) => (
+            <li
+              key={index}
+              className={`navbar-item ${activeSection === item.text.toLowerCase() ? "active" : ""}`}
+              onClick={item.onClick}
+            >
+              {item.icon}
+              <span className="navbar-text">{item.text}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {/* Draw Section */}
+      {activeSection === "draw" && (
+        <div className="draw-section">
+          <canvas
+            ref={canvasRef}
+            className="drawing-canvas"
+            onMouseDown={startDrawing}
+            onMouseMove={draw}
+            onMouseUp={stopDrawing}
+            onMouseLeave={stopDrawing}
+          ></canvas>
+          <button className="clear-btn" onClick={clearCanvas}>
+            <Eraser /> Clear
+          </button>
+        </div>
+      )}
+
+      {/* Notes Section */}
+      {activeSection === "notes" && (
+        <div className="notes-section">
+          <textarea
+            className="notes-textarea"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder="Write your notes here..."
+          ></textarea>
+          <button className="download-btn" onClick={downloadNotes}>
+            <Download /> Download Notes
+          </button>
+        </div>
+      )}
     </nav>
   );
 };
