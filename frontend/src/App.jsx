@@ -2,7 +2,7 @@ import React from "react";
 import { ClerkProvider, SignedIn, SignedOut, RedirectToSignIn, UserButton } from "@clerk/clerk-react";
 import Chatbot from "./components/Chatbot";
 import Navbar from "./components/Navbar";
-import "./App.css"; // Import CSS file
+import "./App.css"; 
 
 const clerkPublishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -10,7 +10,6 @@ const App = () => {
   return (
     <ClerkProvider publishableKey={clerkPublishableKey}>
       <div className="app-container">
-        {/* Sidebar/Navbar section - 35% width */}
         <div className="navbar-section">
           <div className="navbar-header">
             <h1>Dashboard</h1>

@@ -75,7 +75,6 @@ const Chatbot = () => {
       return;
     }
 
-    // Extract text from the image using Tesseract.js
     setLoading(true);
     Tesseract.recognize(
       file,
@@ -114,7 +113,7 @@ const Chatbot = () => {
     setInput('');
   
     try {
-      const response = await fetch("https://useless-1.onrender.com/chat", {
+      const response = await fetch("http://localhost:5000/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: input }),
